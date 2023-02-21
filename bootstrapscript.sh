@@ -88,6 +88,13 @@ pythonRepoList='ol9_baseos_latest ol9_appstream'
 PACKAGE_INSTALL $pythonPackageName $pythonRepoList
 echo "> done installing python3.9"
 
+echo "> installing wget..."
+wgetPackageName='wget'
+wgetRepoList='ol9_appstream'
+
+PACKAGE_INSTALL $wgetPackageName $wgetRepoList
+echo "> done installing wget"
+
 # --------------------
 
 echo ''
