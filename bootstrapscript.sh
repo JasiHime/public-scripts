@@ -8,19 +8,19 @@
 
 
 PACKAGE_INSTALL() {
-	package_name=$1
+	package=$1
 	repo_list=$2
 	repo_err=0
 
 	#Check if chosen repos are configured and enabled
-	for repo in $repo_list
-		if $(dnf repolist $repo | grep enabled); then
+	for repo in $repo_list; do
+		if [[ $(dnf repolist $repo | grep enabled) != '' ]]; then
 			dnf in -y $package
 			break
 		else
 			((repo_err=repo_err+1))
 		fi
-	end
+	done
 
 	#Error if none of the repos are configured/enabled 
 	if [[ $(echo $repo_list | wc -w) < $repo_err || $(echo $repo_list | wc -w) = $repo_err ]]; then
@@ -34,8 +34,8 @@ CREATE_USER() {
 	linkAuthPubKeys=$2
 	sshPath="/home/$accountName/.ssh"
 
-	if $(grep -i $accountName /etc/passwd); then
-	echo "> User with name $accountName already exists. Skipping useradd..."
+	if [[ $(grep -i $accountName /etc/passwd) = '' ]]; then
+		echo "> User with name $accountName already exists. Skipping useradd..."
 	else
 		echo "> Creating user with name $accountName..."
 		useradd -s /bin/bash -c "Ansible Management" -m -r $accountName
