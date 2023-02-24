@@ -44,13 +44,12 @@ CREATE_USER() {
 	#create folder structure for ssh
 	echo "> Setting up SSH authentication for user $accountName..."
 
-	###### caesar home ends up owned by root somehow ########
 	#Copy public key into authorized keys
 	{ # try
 		mkdir -p $sshPath
 		chmod 700 $sshPath
 		chown $accountName:$accountName $sshPath
-		wget $linkAuthPubKeys -q -O - >> $sshPath/authorized_keys
+		wget -q -O - $linkAuthPubKeys >> $sshPath/authorized_keys
 		chmod 600 $sshPath/authorized_keys
 		chown $accountName:$accountName $sshPath/authorized_keys
 	} || { # catch
@@ -74,10 +73,10 @@ fi
 
 ###### THIS IS NOT WORKING CORRECTLY ########
 # Network Check
-	if [[ $(wget -q --spider --timeout=3 https://yum.oracle.com/) != 0 ]]; then
-		echo "ERROR: No network connection, please make sure you are online!"
-		exit 1
-	fi
+if [[ $(wget -q --spider --timeout=3 https://yum.oracle.com/) != 0 ]]; then
+	echo "ERROR: No network connection, please make sure you are online!"
+	exit 1
+fi
 
 # --------------------
 
@@ -108,7 +107,7 @@ echo ''
 echo "> creating user caesar..."
 # Not using an obvious admin name
 ansibleAccountName='caesar'
-ansibleLinkAuthPubKeys="https://link.to.git"
+ansibleLinkAuthPubKeys="https://raw.githubusercontent.com/JasiHime/public-scripts/main/caesar-key.pub"
 
 CREATE_USER $ansibleAccountName $ansibleLinkAuthPubKeys
 echo "> done creating user caesar"
