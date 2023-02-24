@@ -34,7 +34,7 @@ CREATE_USER() {
 	linkAuthPubKeys=$2
 	sshPath="/home/$accountName/.ssh"
 
-	if [[ $(grep -i $accountName /etc/passwd) = '' ]]; then
+	if [[ $(grep -i $accountName /etc/passwd) != '' ]]; then
 		echo "> User with name $accountName already exists. Skipping useradd..."
 	else
 		echo "> Creating user with name $accountName..."
@@ -44,6 +44,7 @@ CREATE_USER() {
 	#create folder structure for ssh
 	echo "> Setting up SSH authentication for user $accountName..."
 
+	###### caesar home ends up owned by root somehow ########
 	#Copy public key into authorized keys
 	{ # try
 		mkdir -p $sshPath
@@ -61,6 +62,8 @@ CREATE_USER() {
 	echo "$accountName ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/admin
 }
 
+
+
 # ---> MAIN <---
 
 # Root Check
@@ -69,6 +72,7 @@ if [[ "$EUID" != 0 ]]; then
 	exit 1
 fi
 
+###### THIS IS NOT WORKING CORRECTLY ########
 # Network Check
 	if [[ $(wget -q --spider --timeout=3 https://yum.oracle.com/) != 0 ]]; then
 		echo "ERROR: No network connection, please make sure you are online!"
